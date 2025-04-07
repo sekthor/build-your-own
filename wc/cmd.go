@@ -5,20 +5,22 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   "wc",
+		Use:   "wc [flags] file",
 		Short: "print newline, word, and byte counts for each file",
 		RunE:  Run,
 	}
 
 	config struct {
 		Bytes bool
-		File  string
+		Lines bool
+		Words bool
 	}
 )
 
@@ -38,11 +40,28 @@ func Run(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
+	if config.Words {
+		fields := strings.Fields(string(file))
+		fmt.Printf("%d %s", len(fields), args[0])
+		return nil
+	}
+
+	var count int = 0
+	for _, b := range file {
+		if b == '\n' {
+			count += 1
+		}
+	}
+	fmt.Printf("%d %s", count, args[0])
+
 	return nil
 }
 
 func init() {
 	rootCmd.Flags().BoolVarP(&config.Bytes, "bytes", "c", false, "print the byte counts")
+	rootCmd.Flags().BoolVarP(&config.Lines, "lines", "l", false, "print the newline counts")
+	rootCmd.Flags().BoolVarP(&config.Words, "words", "w", false, "print the word counts")
+	rootCmd.MarkFlagsMutuallyExclusive("bytes", "lines", "words")
 }
 
 func Execute() {
