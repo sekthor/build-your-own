@@ -13,7 +13,6 @@ type Server struct {
 func (s *Server) Run() error {
 	var err error
 	s.repo, err = newSqliteRepo()
-
 	if err != nil {
 		return err
 	}

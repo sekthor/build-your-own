@@ -13,6 +13,7 @@ type Repo interface {
 
 type repo struct {
 	db *gorm.DB
+	id func() string
 }
 
 func newSqliteRepo() (*repo, error) {
@@ -21,12 +22,20 @@ func newSqliteRepo() (*repo, error) {
 		return nil, err
 	}
 	err = db.AutoMigrate(&ShortURL{})
-	return &repo{db: db}, err
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := cuid2.Init(cuid2.WithLength(6))
+	if err != nil {
+		return nil, err
+	}
+	return &repo{db: db, id: id}, err
 }
 
 func (r *repo) Create(url string) (ShortURL, error) {
 	shorturl := ShortURL{
-		ID:     cuid2.Generate(),
+		ID:     r.id(),
 		Target: url,
 	}
 	result := r.db.Create(&shorturl)
