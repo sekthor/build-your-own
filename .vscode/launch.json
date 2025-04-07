@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "shorturl",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/shorturl/cmd/main.go"
+        },
+        {
+            "name": "wc",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/wc",
+            "args": [
+                "-w",
+                "test.txt"
+            ]
+        }
+    ]
+}
